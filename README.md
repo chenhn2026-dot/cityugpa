@@ -1,82 +1,53 @@
-\# cityugpa
-
-
+﻿# cityugpa
 
 Calculate your GPA the way City University of Hong Kong actually does.
 
+## Why this exists
 
+CityU truncates the GPA to two decimal places instead of rounding it. It also
 
-\## Why this exists
+counts failed courses in the GPA, and includes only the latest attempt in the
 
+CGPA when a course is repeated. Most online GPA calculators get all three wrong.
 
+## Install
 
-CityU truncates the GPA to two decimal places instead of rounding it, counts
+pip install cityugpa
 
-failed courses in the GPA, and includes only the latest attempt in the CGPA
+## Usage
 
-when a course is repeated. Most online GPA calculators get all three wrong.
+cityugpa term examples/fake_transcript.csv
 
+cityugpa cgpa examples/fake_transcript.csv
 
+cityugpa deans-list examples/fake_transcript.csv
 
-\## Install
+cityugpa target --goal 3.6 --remaining 15 examples/fake_transcript.csv
 
+## Rules implemented
 
+- GPA truncated to two decimals, not rounded
 
-&#x20;   pip install cityugpa
+- Failed courses counted in the GPA
 
+- Repeated courses: only the latest attempt counts in the CGPA
 
+- Asterisked grades excluded from the GPA
 
-\## Usage
+## What this does not do
 
+- It does not connect to AIMS.
 
+- It does not store any grade data.
 
-&#x20;   cityugpa term examples/fake\_transcript.csv
+- It has no GUI.
 
-&#x20;   cityugpa cgpa examples/fake\_transcript.csv
+## Development
 
-&#x20;   cityugpa deans-list examples/fake\_transcript.csv
+git clone https://github.com/chenhn2026-dot/cityugpa.git
 
-&#x20;   cityugpa target --goal 3.6 --remaining 15 examples/fake\_transcript.csv
+pip install -e .
 
+pytest
 
-
-\## Rules implemented
-
-
-
-| Rule | Source |
-
-|---|---|
-
-| GPA truncated to 2 decimals, not rounded | ARRO Course Grades |
-
-| Failed courses counted | ARRO Course Grades |
-
-| Repeated course: latest attempt only | ARRO Course Grades |
-
-| Asterisked grades excluded | ARRO Course Grades |
-
-
-
-\## What this does not do
-
-
-
-\- It does not connect to AIMS.
-
-\- It does not store any grade data.
-
-\- It has no GUI.
-
-
-
-\## Development
-
-
-
-&#x20;   git clone https://github.com/chenhn2026-dot/cityugpa.git
-
-&#x20;   pip install -e .
-
-&#x20;   pytest
 
