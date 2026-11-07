@@ -76,6 +76,10 @@ def _parse_file(csv_path: Path) -> list[CourseRecord]:
             raise ValueError(f"{csv_path} 是空文件，没有表头")
 
         columns = _build_column_map(fieldnames)
+        # a duplicate header makes "which column to use" implicit -- fail fast
+        duplicates = _duplicate_columns(fieldnames)
+        if duplicates:
+            raise ValueError("CSV 表头有重复列：" + ",".join(duplicates))
 
         # a header problem makes the whole file unreadable, so raise immediately
         # instead of scanning every row
@@ -165,6 +169,18 @@ def _cell(row: dict, columns: dict[str, str], name: str) -> str:
 def _normalize_grade(grade: str) -> str:
     """Normalise a grade: remove all whitespace and upper-case it, keep the star."""
     return "".join(grade.split()).upper()
+
+
+def _duplicate_columns(fieldnames: Sequence[str]) -> list[str]:
+    """Return header names that repeat after normalisation (case/space/BOM)."""
+    normalized = [raw.strip().lstrip("\ufeff").lower() for raw in fieldnames]
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    for name in normalized:
+        if name and name in seen and name not in duplicates:
+            duplicates.append(name)
+        seen.add(name)
+    return duplicates
 
 
 def _parse_units(text: str, line_no: int, errors: list[str]) -> float:
