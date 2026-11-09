@@ -24,6 +24,11 @@ On errors: the whole file is scanned first, then every bad row is reported at
 once in a single ValueError, each message carrying its line number (line
 numbers follow the physical lines of the file, so the header is line 1).
 
+Encoding: only UTF-8 is accepted (with or without BOM). A GBK / UTF-16 file gets
+a "save as CSV UTF-8" hint instead of a raw UnicodeDecodeError. Duplicate header
+names also raise an error, so that "which column wins" never becomes an
+implicit rule.
+
 User-facing error messages stay in Chinese on purpose: the CLI output and the
 demo transcript are Chinese, so all messages shown to the user are Chinese.
 """
@@ -59,13 +64,21 @@ def parse_csv(path: str | Path) -> list[CourseRecord]:
     Raises:
         FileNotFoundError: the file does not exist (E's cli turns this into
             exit code 1).
-        ValueError: missing header columns, or bad rows in the body.
+        ValueError: missing or duplicate header columns, bad rows in the body,
+            or a file that is not UTF-8 encoded.
     """
-    return _parse_file(Path(path))
+    csv_path = Path(path)
+    try:
+        return _parse_file(csv_path)
+    except UnicodeDecodeError as exc:
+        # Excel on Chinese Windows saves CSV as GBK by default; do not let a
+        # raw decoding error reach the user
+        raise ValueError(_encoding_hint(csv_path, exc)) from exc
 
 
 def _parse_file(csv_path: Path) -> list[CourseRecord]:
-    """Actual parsing flow: assumes the file is UTF-8 (BOM allowed)."""
+    """Actual parsing flow: assumes UTF-8 (BOM allowed); parse_csv turns a
+    decoding error into a readable message."""
     # utf-8-sig: CSV files saved by Excel often start with a BOM, and this
     # encoding strips the leading \ufeff automatically
     with open(csv_path, newline="", encoding="utf-8-sig") as handle:
@@ -181,6 +194,30 @@ def _duplicate_columns(fieldnames: Sequence[str]) -> list[str]:
             duplicates.append(name)
         seen.add(name)
     return duplicates
+
+
+def _encoding_hint(csv_path: Path, exc: UnicodeDecodeError) -> str:
+    """Translate a decoding failure into an actionable hint, guessing the encoding."""
+    guess = ""
+    try:
+        head = csv_path.read_bytes()[:4096]
+    except OSError:                     # unreadable: keep the generic message
+        head = b""
+    for candidate in ("gb18030", "utf-16"):
+        if not head:
+            break
+        try:
+            head.decode(candidate)
+        except UnicodeDecodeError:
+            continue
+        guess = f"，看起来是 {candidate.upper()} 编码"
+        break
+
+    return (
+        f"{csv_path} 不是 UTF-8 编码，读不出来{guess}。"
+        "用 Excel 打开后「另存为 → CSV UTF-8（逗号分隔）」再试。"
+        f"（原始错误：{exc.reason}）"
+    )
 
 
 def _parse_units(text: str, line_no: int, errors: list[str]) -> float:
