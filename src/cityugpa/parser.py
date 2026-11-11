@@ -92,7 +92,7 @@ def _parse_file(csv_path: Path) -> list[CourseRecord]:
         # a duplicate header makes "which column to use" implicit -- fail fast
         duplicates = _duplicate_columns(fieldnames)
         if duplicates:
-            raise ValueError("CSV 表头有重复列：" + ",".join(duplicates))
+            raise ValueError("CSV 表头有重复列：" + ", ".join(duplicates))
 
         # a header problem makes the whole file unreadable, so raise immediately
         # instead of scanning every row
