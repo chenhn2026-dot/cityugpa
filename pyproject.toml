@@ -1,26 +1,20 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
- 
+
 [project]
 name = "cityugpa"
 version = "0.0.1"
 description = "Calculate CityU GPA under official academic rules"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
 authors = [{ name = "chenhn2026-dot", email = "chenhn2026-dot@users.noreply.github.com" }]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
-]
- 
-[project.urls]
-Homepage = "https://github.com/chenhn2026-dot/cityugpa"
-Repository = "https://github.com/chenhn2026-dot/cityugpa"
- 
+
 [project.scripts]
 cityugpa = "cityugpa.cli:main"
- 
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
