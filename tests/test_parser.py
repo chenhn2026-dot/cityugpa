@@ -260,6 +260,12 @@ def test_missing_file(tmp_path):
         parse_csv(tmp_path / "不存在.csv")
 
 
+def test_directory_path_is_rejected(tmp_path):
+    """A directory path -> ValueError naming the path, not PermissionError."""
+    with pytest.raises(ValueError, match="是目录"):
+        parse_csv(tmp_path)
+
+
 def test_duplicate_column_rejected(tmp_path):
     """Duplicate header columns -> error, so that "which column wins" never
     becomes an implicit rule."""

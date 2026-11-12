@@ -65,9 +65,12 @@ def parse_csv(path: str | Path) -> list[CourseRecord]:
         FileNotFoundError: the file does not exist (E's cli turns this into
             exit code 1).
         ValueError: missing or duplicate header columns, bad rows in the body,
-            or a file that is not UTF-8 encoded.
+            a path that points to a directory, or a file that is not UTF-8
+            encoded.
     """
     csv_path = Path(path)
+    if csv_path.is_dir():
+        raise ValueError(f"{csv_path} 是目录，不是 CSV 文件")
     try:
         return _parse_file(csv_path)
     except UnicodeDecodeError as exc:
