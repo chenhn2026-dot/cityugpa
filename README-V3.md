@@ -31,7 +31,7 @@ calculate, and it shows you how it got there, line by line.
 
 That is the whole idea. There is no login, no screenshot to upload, and nothing is sent anywhere.
 
-Here is a real run. Six courses, four of which count toward the GPA:
+Here is a real run. Seven courses, four of which count toward the GPA:
 
 ```
 Semester A 2026-27
@@ -41,13 +41,14 @@ CS1302A      3 CU   B       3.00
 CS2613       1 CU   A       4.00
 GE1401       3 CU   P         --
 GE2313       3 CU   A+*       --
+GE2410       3 CU   Z         --
 
 SGPA: 3.41   (12 CU in GPA, 15 CU earned)
 ```
 
-The useful part is not the 3.41. It is the two lines underneath the table: `P` earned you 3 credits but no
-grade points, and `A+*` earned you neither. Most calculators get those two lines wrong, and that is how you
-end up with 3.42 instead of 3.41.
+The useful part is not the 3.41. It is the three `--` rows underneath the table: `P` earned you 3 credits but
+no grade points, `A+*` earned you neither, and `Z` is an exemption that earns nothing. Most calculators get
+those rows wrong, and that is how you end up with 3.42 instead of 3.41.
 
 ## Words you will see
 
@@ -147,7 +148,7 @@ You should see a usage message listing `term`, `cgpa`, `deans-list` and `target`
 installed and on your PATH.
 
 If you get `command not found: cityugpa`, Python installed the library but the launcher is not on your PATH.
-Use `python3 -m cityugpa --help` instead. It is the same program, and it always works.
+Use `python3 -m cityugpa.cli --help` instead. It is the same program, and it always works.
 
 ### Step 5. If something goes wrong
 
@@ -192,6 +193,7 @@ CS1302A,3,B,2026A
 CS2613,1,A,2026A
 GE1401,3,P,2026A
 GE2313,3,A+*,2026A
+GE2410,3,Z,2026A
 ```
 
 Save it as plain text, not as a Word document.
@@ -243,6 +245,7 @@ CS1302A      3 CU   B       3.00
 CS2613       1 CU   A       4.00
 GE1401       3 CU   P         --
 GE2313       3 CU   A+*       --
+GE2410       3 CU   Z         --
 
 SGPA: 3.41   (12 CU in GPA, 15 CU earned)
 CGPA: 3.41   (12 CU)
@@ -263,7 +266,8 @@ CGPA: 3.41   (12 CU)
 - `SGPA: 3.41` is the average for this term.
 - `(12 CU in GPA, 15 CU earned)` means 12 credit units went into the calculation, while 15 units were earned
   in total. The difference is `GE1401` (`P`): it earns credit but has no grade point, so it cannot be in the
-  average. `GE2313` (`A+*`) is excluded completely, so it adds nothing to either number.
+  average. `GE2313` (`A+*`) is excluded completely, so it adds nothing to either number. `GE2410` (`Z`) is an
+  exemption: no grade points and no credit, so it changes nothing at all.
 - `CGPA: 3.41` is the cumulative average. Your file only has one term, so it equals the SGPA.
 
 **Why 3.41 and not 3.42?** Add up each grade point multiplied by its credit units:
@@ -373,14 +377,15 @@ your CSV → parser.py → scale.py → calc.py → report.py → your terminal
 - `calc.py` applies the retake rule and divides once.
 - `report.py` prints the table.
 
-Grade points are stored as integers in tenths (4.3 becomes 43), so the division and the truncation never depend
-on floating-point rounding. That is why the answer is exactly 3.41 and not occasionally 3.40.
+Truncation uses `math.floor(x * 100 + 1e-9) / 100` so binary floating-point representation noise (such as
+`3.41 * 100 = 340.99999999999994`) never drops `3.41` down to `3.40`, while still strictly truncating
+`3.4166…` to `3.41` instead of rounding to `3.42`.
 
 ### The five rules, and the test that guards each one
 
 | Rule | Implementation | Guarded by |
 | --- | --- | --- |
-| Truncate, never round | integer tenths, cut at 2 decimals | `tests/test_calc.py::test_truncate_exact` |
+| Truncate, never round | `math.floor(x * 100 + 1e-9) / 100`, cut at 2 decimals | `tests/test_calc.py::test_truncate_exact` |
 | `F` counts as 0.0 | failed courses stay in the weighted average | `tests/test_calc.py` |
 | Retakes: latest only | newest term wins, older attempts dropped from CGPA | `tests/test_calc.py` |
 | Starred grades | `A+*` keeps its grade point, adds no GPA or credits | `tests/test_scale.py` |
