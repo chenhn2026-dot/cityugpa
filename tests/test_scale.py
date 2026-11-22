@@ -36,3 +36,7 @@ def test_no_credit_for_star_and_z():
     # 带星的学分不计入毕业要求，Z 什么都不给
     assert can_earn_credit("A+*", s) is False
     assert can_earn_credit("Z", s) is False
+
+
+def test_load_scale_defaults_to_cityu():
+    assert load_scale()["points"]["A+"] == 4.3

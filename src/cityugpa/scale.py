@@ -3,7 +3,7 @@
 import json
 from importlib.resources import files
 
-def load_scale(scale_name: str):
+def load_scale(scale_name: str = "cityu"):
     resource = files("cityugpa.scales").joinpath(f"{scale_name}.json")
     with resource.open("r", encoding="utf-8") as f:
         return json.load(f)
