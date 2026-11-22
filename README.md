@@ -38,3 +38,9 @@ CGPA when a course is repeated. Most online GPA calculators get all three wrong.
     cd cityugpa
     pip install -e .
     pytest
+
+## CLI Usage
+- `cityugpa term <file.csv>`: Calculate semester SGPA
+- `cityugpa cgpa <file.csv>`: Calculate cumulative CGPA
+- `cityugpa deans-list <file.csv>`: Check Dean's List qualification
+- `cityugpa target --goal <gpa> --remaining <units> <file.csv>`: Reverse calculate target GPA
