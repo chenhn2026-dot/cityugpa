@@ -89,7 +89,7 @@ def print_deans_list(result):
     if is_deans:
         # 5. 豪华学术风奖状 + 保留小奶牛
         print(f"{GREEN}{BOLD}")
-        print(f"    ✦ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ✦")
+        print(f"    * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ *")
         print(f"    ┃                               ┃")
         print(f"    ┃        ★  DEAN'S LIST  ★      ┃")
         print(f"    ┃         CONGRATULATIONS       ┃")
@@ -100,14 +100,14 @@ def print_deans_list(result):
         print(f"    ┃              (__)\\       )\\/\\ ┃")
         print(f"    ┃                   ||----w |   ┃")
         print(f"    ┃                   ||     ||   ┃")
-        print(f"    ✦ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ✦")
+        print(f"    * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ *")
         print(f"{RESET}\n")
     else:
         print(f"{RED}Dean's List: Not Qualified (SGPA {sgpa_str} < 3.70 or insufficient credits){RESET}\n")
 
 def print_target(required_point, possible):
-    print(f"{BOLD}🎯 Target Plan:{RESET}")
+    print(f"{BOLD}Target Plan:{RESET}")
     if possible:
         print(f"   You need an average GPA of {GREEN}{required_point:.2f}{RESET} in remaining courses.\n")
     else:
-        print(f"   {RED}❌ Target is impossible. Required GPA {required_point:.2f} exceeds maximum limit.{RESET}\n")
+        print(f"   {RED}[X] Target is impossible. Required GPA {required_point:.2f} exceeds maximum limit.{RESET}\n")

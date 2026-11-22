@@ -1,5 +1,4 @@
 # src/cityugpa/cli.py
-# src/cityugpa/cli.py
 import argparse
 import sys
 from cityugpa.parser import parse_csv
@@ -8,7 +7,21 @@ from cityugpa.scale import load_scale
 from cityugpa.report import print_term_report, print_deans_list, print_target
 
 
+def _forgiving_console() -> None:
+    """Windows 中文控制台通常是 GBK，遇到画不出的字符会直接抛 UnicodeEncodeError。
+
+    这里把编码错误降级成 ``?``，保证任何时候都能把结果打印完，而不是崩在
+    半张表格上。
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
+
 def main():
+    _forgiving_console()
     parser = argparse.ArgumentParser(prog="cityugpa", description="Calculate CityU GPA")
     sub = parser.add_subparsers(dest="command", required=True)
 
