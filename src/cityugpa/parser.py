@@ -39,8 +39,10 @@ import csv
 import math
 from collections.abc import Sequence
 from pathlib import Path
-
+from dataclasses import dataclass
 from cityugpa.models import CourseRecord
+from typing import Iterable
+from .models import GpaResult, CourseRecord
 
 __all__ = ["parse_csv"]
 
@@ -237,3 +239,69 @@ def _parse_units(text: str, line_no: int, errors: list[str]) -> float:
         errors.append(f"第 {line_no} 行：units 必须是非负数字：{text!r}")
         return 0.0
     return units
+
+
+@dataclass(frozen=True)
+class CourseRecord:
+    """A single course record from a transcript CSV.
+
+    Attributes:
+        code: course code, e.g. "COMP1021"
+        units: number of units, always a float
+        grade: letter grade, e.g. "A-", "P", "F", "A+*"
+        term: term code, e.g. "2026A" (optional)
+    """
+    code: str
+    units: float
+    grade: str
+    term: str = ""
+
+
+@dataclass(frozen=True)
+class GpaResult:
+    sgpa: float | None
+    cgpa: float | None
+    gpa_units: float
+    earned_units: float
+
+
+def truncate2(x:float) -> float:
+    """Truncate a float to 2 decimal places without rounding."""
+    return math.floor(x * 100 + 1e-9) / 100
+
+def compute(records: Iterable[CourseRecord], scale) -> GpaResult:
+    code_map: dict[str, CourseRecord] = {}
+    for record in records:
+        code_map[rec.code] = record
+    all_records = list(code_map.values())
+    def is_grade_valid(grade: str) -> bool:
+        return scale.is_included(grade)
+    cgpa_sum_point = 0.0
+    cgpa_sum_units = 0.0
+    earned_units = 0.0
+    for record in all_unique_records:
+        gp = scale.grade_point(record.grade)
+        if is_grade_valid(record.grade):
+            cgpa_sum_point += gp * record.units
+            cgpa_sum_units += record.units
+        if scale.is_earned(record.grade):
+            earned_units += record.units
+    cgpa = truncate2(cgpa_sum_point / cgpa_sum_units) if cgpa_sum_units > 0 else None
+    sgpa_sum_point = 0.0
+    sgpa_sum_units = 0.0
+    for r in all_unique_records:
+        if r.term != "2026A":
+            continue
+        gp = scale.grade_point(r.grade)
+        if is_grade_valid(r.grade):
+            sgpa_sum_point += gp * r.units
+            sgpa_sum_units += r.units
+    sgpa = truncate2(sgpa_sum_point / sgpa_sum_units) if sgpa_sum_units > 0 else None
+    return GpaResult(sgpa=sgpa, cgpa=cgpa, gpa_units=cgpa_sum_units, earned_units=earned_units)
+
+def plan_target(cgpa: float, current_units: float, goal: float, remaining_units: float, max_point: float = 4.3):
+    have = cgpa * current_units
+    need = goal * (current_units + remaining_units)
+    required_point = (need - have) / remaining_units
+    possible = 0 <= required_point <= max_point
+    return required_point, possible
