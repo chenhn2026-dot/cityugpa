@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CityUGPA — Precision CityU GPA Calculator</title>
+  <!--
+    Visual Direction (Frontend Design Skill):
+    - Obsidian Keynote Stage (#0a0b0e) + Pure Editorial White (#ffffff) + CityU Crimson (#a81e52 / #ff4d8d)
+    - High-contrast architectural rhythm: no repetitive SaaS card stacks, no decorative eyebrows
+    - All layout, color, and typography rules are mirrored inline inside <body> so pasting
+      <div class="cg-page">...</div> into Moodle TinyMCE (View -> Source code) stays intact.
+  -->
+  <style>
+    body {
+      margin: 0;
+      padding: 28px 18px;
+      background-color: #eceef2;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .cg-aurora {
+      background: linear-gradient(115deg, #5eead4 0%, #38bdf8 48%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent !important;
+      -webkit-text-fill-color: transparent;
+    }
+    .cg-cta {
+      transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), opacity 150ms ease, background-color 150ms ease;
+    }
+    .cg-cta:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+    .cg-cta:active {
+      transform: scale(0.98);
+    }
+    .cg-navlink {
+      transition: color 150ms ease, opacity 150ms ease;
+    }
+    .cg-navlink:hover {
+      opacity: 0.72;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cg-cta, .cg-navlink { transition: none !important; transform: none !important; }
+    }
+    @media (max-width: 720px) {
+      body { padding: 0; }
+      .cg-page { border-radius: 0 !important; }
+      .cg-hero-pad { padding: 28px 22px 26px 22px !important; }
+      .cg-sec-pad { padding: 32px 22px !important; }
+      .cg-h1 { font-size: 42px !important; }
+      .cg-sub { font-size: 22px !important; }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 28px 18px; background-color: #eceef2; color: #141519; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', sans-serif; line-height: 1.6;">
+
+<!-- ======================================================================
+     MOODLE / TINYMCE COPY START
+     To publish on dive.cs.cityu.edu.hk (Editing this page '项目'):
+     Open TinyMCE menu: View -> Source code (or Tools -> Source code),
+     then paste everything from <div class="cg-page"> to its closing </div>.
+     ====================================================================== -->
+<div class="cg-page" style="max-width: 980px; margin: 0 auto; background-color: #ffffff; border-radius: 22px; overflow: hidden; border: 1px solid #dcdfe6; color: #141519; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', sans-serif; line-height: 1.6;">
+
+  <!-- ====================================================================
+       1. OBSIDIAN KEYNOTE HERO: Project Name + Pitch + GitHub & PyPI
+       ==================================================================== -->
+  <header style="background-color: #070b14; background-image: radial-gradient(ellipse 68% 60% at 14% 16%, rgba(45, 212, 191, 0.25) 0%, rgba(45, 212, 191, 0) 62%), radial-gradient(ellipse 68% 62% at 86% 18%, rgba(129, 140, 248, 0.30) 0%, rgba(168, 85, 247, 0.12) 44%, rgba(7, 11, 20, 0) 74%), radial-gradient(ellipse 55% 48% at 52% 96%, rgba(56, 189, 248, 0.18) 0%, rgba(7, 11, 20, 0) 68%); color: #f5f6f8;">
+
+    <!-- Top Architectural Bar -->
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 20px 44px; border-bottom: 1px solid #1e2028;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 999px; background-color: #2dd4bf; background-image: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 55%, #a78bfa 100%);"></span>
+        <span style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: #ffffff;">CityUGPA</span>
+        <span style="font-size: 12.5px; color: #7e8392; padding-left: 8px; border-left: 1px solid #262934;">CityU CS &middot; Tag: CityUGPA</span>
+      </div>
+      <nav aria-label="Primary links" style="display: flex; flex-wrap: wrap; align-items: center; gap: 22px; font-size: 13.5px;">
+        <a class="cg-navlink" href="https://github.com/chenhn2026-dot/cityugpa" target="_blank" rel="noopener noreferrer" style="color: #e5e7eb; text-decoration: none; font-weight: 500;">GitHub</a>
+        <a class="cg-navlink" href="https://pypi.org/project/cityugpa/" target="_blank" rel="noopener noreferrer" style="color: #e5e7eb; text-decoration: none; font-weight: 500;">PyPI</a>
+        <a class="cg-navlink" href="https://github.com/chenhn2026-dot/cityugpa#readme" target="_blank" rel="noopener noreferrer" style="color: #9ca3af; text-decoration: none; font-weight: 500;">README</a>
+        <a class="cg-navlink" href="https://www.cityu.edu.hk/arro/asmt/cgrd_main.htm" target="_blank" rel="noopener noreferrer" style="color: #5eead4; text-decoration: none; font-weight: 500;">ARRO Rules</a>
+      </nav>
+    </div>
+
+    <!-- Main Asymmetric Stage -->
+    <div class="cg-hero-pad" style="padding: 50px 44px 44px 44px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 40px;">
+
+        <!-- Left: Display Typography + Crisp Actions -->
+        <div style="flex: 1 1 400px; min-width: 260px;">
+          <h1 class="cg-h1" style="margin: 0 0 18px 0; font-size: 60px; font-weight: 700; letter-spacing: -0.045em; line-height: 1.0; color: #ffffff;">
+            <span class="cg-aurora" style="color: #ffffff;">CityUGPA</span>
+            <span class="cg-sub" style="display: block; margin-top: 10px; font-size: 27px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.2; color: #a1a6b4;">
+              Exact CityU GPA. Never rounded up.
+            </span>
+          </h1>
+
+          <p style="margin: 0 0 28px 0; font-size: 16px; line-height: 1.6; color: #9ca3af; max-width: 460px;">
+            An offline Python CLI that calculates CityU Hong Kong SGPA, CGPA, Dean&rsquo;s List eligibility, and target grades strictly by official ARRO regulations.
+          </p>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+            <a class="cg-cta" href="https://github.com/chenhn2026-dot/cityugpa" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 11px 22px; border-radius: 10px; background-color: #2dd4bf; background-image: linear-gradient(120deg, #2dd4bf 0%, #38bdf8 55%, #818cf8 100%); color: #051019; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: -0.01em;">GitHub Repository</a>
+            <a class="cg-cta" href="https://pypi.org/project/cityugpa/" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 11px 22px; border-radius: 10px; background-color: #11192b; color: #f8fafc; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; border: 1px solid #2a3a58;">PyPI Package</a>
+            <a class="cg-navlink" href="#demo" style="display: inline-block; padding: 10px 8px; color: #5eead4; text-decoration: none; font-size: 14px; font-weight: 500;">Watch 60s demo</a>
+          </div>
+        </div>
+
+        <!-- Right: Precision Diff Specimen (Subject-Specific Visual Focal Point) -->
+        <div style="flex: 1 1 320px; min-width: 260px; background-color: #0d1424; border: 1px solid #22304a; border-top: 3px solid #2dd4bf; border-radius: 16px; overflow: hidden;">
+          <div style="padding: 12px 18px; border-bottom: 1px solid #222530; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #8c92a4;">
+            <span style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #d1d5db;">41.0 &divide; 12 = 3.41666&hellip;</span>
+            <span style="color: #5eead4; font-weight: 600;">ARRO 4.3 Scale</span>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; border-bottom: 1px solid #222530;">
+            <div style="flex: 1 1 140px; padding: 22px 18px; border-right: 1px solid #222530;">
+              <div style="font-size: 11.5px; font-weight: 600; color: #34d399; margin-bottom: 6px;">CityUGPA (Truncated)</div>
+              <div style="font-size: 46px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: #ffffff; font-variant-numeric: tabular-nums;">3.41</div>
+              <div style="font-size: 12px; color: #8c92a4; margin-top: 8px;">Matches AIMS transcript</div>
+            </div>
+            <div style="flex: 1 1 140px; padding: 22px 18px; background-color: #0e1015;">
+              <div style="font-size: 11.5px; font-weight: 600; color: #f87171; margin-bottom: 6px;">Generic Calculators</div>
+              <div style="font-size: 46px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: #5b6070; text-decoration: line-through; font-variant-numeric: tabular-nums;">3.42</div>
+              <div style="font-size: 12px; color: #6e7385; margin-top: 8px;">Rounds up by mistake</div>
+            </div>
+          </div>
+
+          <div style="padding: 13px 18px; background-color: #0d0e13; display: flex; justify-content: space-between; align-items: center; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px;">
+            <span style="color: #e5e7eb;"><span style="color: #34d399;">$</span> pip install cityugpa</span>
+            <span style="color: #7e8392; font-size: 11.5px;">0 deps &middot; MIT</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Integrated Architectural Spec Strip (Bottom of Hero) -->
+    <div style="display: flex; flex-wrap: wrap; border-top: 1px solid #1e2028; background-color: #0e1015;">
+      <div style="flex: 1 1 180px; padding: 18px 24px; border-right: 1px solid #1e2028;">
+        <div style="font-size: 12px; color: #8c92a4;">Official Grade Table</div>
+        <div style="font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 2px;">5 ARRO Rules in JSON</div>
+      </div>
+      <div style="flex: 1 1 180px; padding: 18px 24px; border-right: 1px solid #1e2028;">
+        <div style="font-size: 12px; color: #8c92a4;">Runtime Footprint</div>
+        <div style="font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 2px;">Python 3.10+ Stdlib Only</div>
+      </div>
+      <div style="flex: 1 1 180px; padding: 18px 24px; border-right: 1px solid #1e2028;">
+        <div style="font-size: 12px; color: #8c92a4;">Privacy Guarantee</div>
+        <div style="font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 2px;">100% Local, No AIMS Login</div>
+      </div>
+      <div style="flex: 1 1 180px; padding: 18px 24px;">
+        <div style="font-size: 12px; color: #8c92a4;">CLI Subcommands</div>
+        <div style="font-size: 16px; font-weight: 600; color: #ffffff; margin-top: 2px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px;">term / cgpa / deans-list / target</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN EDITORIAL BODY -->
+  <main>
+
+    <!-- ==================================================================
+         2. 60-SECOND DEMO (VIDEO / GIF) + REAL CLI OUTPUT
+         ================================================================== -->
+    <section id="demo" aria-labelledby="sec-demo" class="cg-sec-pad" style="padding: 46px 44px; border-bottom: 1px solid #e6e8ee;">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 24px;">
+        <div>
+          <h2 id="sec-demo" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: #141519; line-height: 1.15;">
+            60-Second Demo
+          </h2>
+          <p style="margin: 6px 0 0 0; font-size: 15px; color: #5b6070;">
+            End-to-end walkthrough of single-semester SGPA, retake CGPA, Dean&rsquo;s List check, and target GPA planning.
+          </p>
+        </div>
+        <span style="font-size: 12.5px; font-weight: 600; color: #0284c7; background-color: #f0fdfa; border: 1px solid #99f6e4; padding: 4px 12px; border-radius: 999px;">Video / GIF Slot</span>
+      </div>
+
+      <!-- Cinema Media Placeholder (Replace inside Moodle TinyMCE via Insert -> Media) -->
+      <div style="background-color: #0b1120; background-image: radial-gradient(ellipse 65% 75% at 50% 0%, rgba(56, 189, 248, 0.22) 0%, rgba(129, 140, 248, 0.12) 45%, rgba(11, 17, 32, 0) 75%); border: 1px solid #1e293b; border-radius: 14px; padding: 36px 28px; text-align: center; margin-bottom: 20px; color: #f5f6f8;">
+        <div style="display: inline-block; width: 52px; height: 52px; line-height: 52px; border-radius: 999px; background-color: #2dd4bf; background-image: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 55%, #818cf8 100%); color: #051019; font-size: 18px; margin-bottom: 12px;">&#9654;</div>
+        <div style="font-size: 18px; font-weight: 600; letter-spacing: -0.015em; color: #ffffff; margin-bottom: 6px;">60-Second Demo Video / GIF</div>
+        <div style="font-size: 13.5px; color: #9ca3af; max-width: 520px; margin: 0 auto;">
+          In Moodle TinyMCE, click <strong style="color: #ffffff;">Insert &rarr; Media</strong> (or <strong style="color: #ffffff;">Image</strong> for GIF) to embed <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #1f222c; color: #f5f6f8; padding: 2px 6px; border-radius: 5px;">demo.mp4</code> or <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #1f222c; color: #f5f6f8; padding: 2px 6px; border-radius: 5px;">demo.gif</code> directly in this slot.
+        </div>
+      </div>
+
+      <!-- Primary Terminal: Single Semester -->
+      <div style="border-radius: 14px; overflow: hidden; border: 1px solid #262934; margin-bottom: 16px; background-color: #0e1015;">
+        <div style="background-color: #181a22; padding: 10px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid #262934; font-size: 12px;">
+          <span>
+            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 999px; background-color: #ff5f56; margin-right: 5px;"></span>
+            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 999px; background-color: #ffbd2e; margin-right: 5px;"></span>
+            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 999px; background-color: #27c93f; margin-right: 10px;"></span>
+            <span style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #e5e7eb;">cityugpa term examples/fake_transcript.csv</span>
+          </span>
+          <span style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #5eead4;">41.0 &divide; 12 &rarr; 3.41</span>
+        </div>
+        <div style="overflow-x: auto;">
+          <pre style="margin: 0; padding: 18px 22px; color: #e5e7eb; font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; font-variant-numeric: tabular-nums;"><code><span style="color: #34d399;">$</span> cityugpa term examples/fake_transcript.csv
+Semester A 2026-27
+MA1508       4 CU   A-      3.70
+MA1503       4 CU   B+      3.30
+CS1302A      3 CU   B       3.00
+CS2613       1 CU   A       4.00
+GE1401       3 CU   P         --   <span style="color: #7e8392;"># earns 3 CU, 0 grade points</span>
+GE2313       3 CU   A+*       --   <span style="color: #7e8392;"># starred: 0 CU earned, 0 CU in GPA</span>
+GE2410       3 CU   Z         --   <span style="color: #7e8392;"># exemption: 0 CU earned, 0 CU in GPA</span>
+
+<span style="color: #34d399; font-weight: 700;">SGPA: 3.41</span>   (12 CU in GPA, 15 CU earned)
+<span style="color: #34d399; font-weight: 700;">CGPA: 3.41</span>   (12 CU)</code></pre>
+        </div>
+      </div>
+
+      <!-- Secondary Terminals: Retake + Dean's List & Target -->
+      <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+        <div style="flex: 1 1 380px; border-radius: 14px; overflow: hidden; border: 1px solid #262934; background-color: #0e1015;">
+          <div style="background-color: #181a22; padding: 9px 16px; border-bottom: 1px solid #262934; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #9ca3af;">
+            Retakes &amp; Failed Course &mdash; fake_retake.csv
+          </div>
+          <div style="overflow-x: auto;">
+            <pre style="margin: 0; padding: 16px 20px; color: #e5e7eb; font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; font-variant-numeric: tabular-nums;"><code><span style="color: #34d399;">$</span> cityugpa cgpa examples/fake_retake.csv
+All terms (latest attempt only)
+CS2310       3 CU   B+      3.30
+CS2613       1 CU   F       0.00
+MA2185       3 CU   A-      3.70
+
+<span style="color: #34d399; font-weight: 700;">CGPA: 3.00</span>   (7 CU)</code></pre>
+          </div>
+        </div>
+
+        <div style="flex: 1 1 380px; border-radius: 14px; overflow: hidden; border: 1px solid #262934; background-color: #0e1015;">
+          <div style="background-color: #181a22; padding: 9px 16px; border-bottom: 1px solid #262934; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #9ca3af;">
+            Dean&rsquo;s List &amp; Target Planner
+          </div>
+          <div style="overflow-x: auto;">
+            <pre style="margin: 0; padding: 16px 20px; color: #e5e7eb; font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; font-variant-numeric: tabular-nums;"><code><span style="color: #34d399;">$</span> cityugpa deans-list examples/fake_transcript.csv
+Dean's List: <span style="color: #f87171;">not eligible</span> (SGPA 3.41 &lt; 3.70)
+
+<span style="color: #34d399;">$</span> cityugpa target --goal 3.6 --remaining 15 examples/fake_transcript.csv
+Current: 3.41 (12 CU) &rarr; Goal: 3.60 (27 CU)
+<span style="color: #5eead4; font-weight: 700;">Needed: 3.75</span> avg over next 15 CU (possible)</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin: 16px 0 0 0; font-size: 13.5px; color: #5b6070;">
+        In <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #141519;">fake_retake.csv</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #141519;">CS2310</code> was taken in 2025A (C+) and retaken in 2026A (B+), while <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #141519;">CS2613</code> (F) remains in the denominator: <strong style="color: #141519; font-variant-numeric: tabular-nums;">(3&times;3.3 + 1&times;0.0 + 3&times;3.7) &divide; 7 = 3.00</strong> (averaging both gives 2.79; dropping F gives 3.50).
+      </p>
+    </section>
+
+    <!-- ==================================================================
+         3. FIVE OFFICIAL CITYU RULES + ARRO SOURCE LINK (EDITORIAL SPEC)
+         ================================================================== -->
+    <section aria-labelledby="sec-rules" class="cg-sec-pad" style="padding: 46px 44px; border-bottom: 1px solid #e6e8ee;">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 28px;">
+        <div>
+          <h2 id="sec-rules" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: #141519; line-height: 1.15;">
+            Five Official CityU Rules
+          </h2>
+          <p style="margin: 6px 0 0 0; font-size: 15px; color: #5b6070;">
+            Encoded directly as data in <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 13px; background-color: #f3f4f6; color: #141519; padding: 2px 6px; border-radius: 5px;">src/cityugpa/scales/cityu.json</code> &mdash; every edge case matches official university policy.
+          </p>
+        </div>
+        <a class="cg-cta" href="https://www.cityu.edu.hk/arro/asmt/cgrd_main.htm" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 8px 15px; border-radius: 8px; background-color: #eff6ff; color: #0369a1; border: 1px solid #bae6fd; text-decoration: none; font-size: 13px; font-weight: 600;">Source: CityU ARRO Policy</a>
+      </div>
+
+      <!-- Clean Architectural Hairline Specification Ledger -->
+      <div style="border-top: 3px solid #0ea5e9;">
+
+        <!-- Rule 1 -->
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid #e6e8ee;">
+          <div style="display: flex; align-items: baseline; gap: 16px; flex: 1 1 360px;">
+            <span style="font-size: 20px; font-weight: 700; color: #0284c7; font-variant-numeric: tabular-nums; min-width: 22px;">1</span>
+            <div>
+              <div style="font-size: 16px; font-weight: 600; color: #141519;">Truncate at 2 decimals, never round</div>
+              <div style="font-size: 13.5px; color: #5b6070; margin-top: 3px;">Computed via <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #141519;">math.floor(x * 100 + 1e-9) / 100</code>.</div>
+            </div>
+          </div>
+          <div style="flex: 0 1 320px; font-size: 12.5px; font-variant-numeric: tabular-nums;">
+            <span style="display: inline-block; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 2px 9px; font-weight: 600; margin-bottom: 4px;">ARRO: 41.0 &divide; 12 = 3.41</span><br>
+            <span style="color: #be123c;">Generic calculators round up to 3.42</span>
+          </div>
+        </div>
+
+        <!-- Rule 2 -->
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid #e6e8ee;">
+          <div style="display: flex; align-items: baseline; gap: 16px; flex: 1 1 360px;">
+            <span style="font-size: 20px; font-weight: 700; color: #0284c7; font-variant-numeric: tabular-nums; min-width: 22px;">2</span>
+            <div>
+              <div style="font-size: 16px; font-weight: 600; color: #141519;">Failed courses (<code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px;">F</code>) count as 0.0 in GPA</div>
+              <div style="font-size: 13.5px; color: #5b6070; margin-top: 3px;">Earns 0 credit units toward graduation, but stays in the GPA denominator.</div>
+            </div>
+          </div>
+          <div style="flex: 0 1 320px; font-size: 12.5px; font-variant-numeric: tabular-nums;">
+            <span style="display: inline-block; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 2px 9px; font-weight: 600; margin-bottom: 4px;">CS2613 F stays in 7 CU denominator</span><br>
+            <span style="color: #be123c;">Dropping F inflates CGPA to 3.50</span>
+          </div>
+        </div>
+
+        <!-- Rule 3 -->
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid #e6e8ee;">
+          <div style="display: flex; align-items: baseline; gap: 16px; flex: 1 1 360px;">
+            <span style="font-size: 20px; font-weight: 700; color: #0284c7; font-variant-numeric: tabular-nums; min-width: 22px;">3</span>
+            <div>
+              <div style="font-size: 16px; font-weight: 600; color: #141519;">Retakes keep only the latest attempt</div>
+              <div style="font-size: 13.5px; color: #5b6070; margin-top: 3px;">Earlier attempts remain on record, while CGPA uses only the most recent term.</div>
+            </div>
+          </div>
+          <div style="flex: 0 1 320px; font-size: 12.5px; font-variant-numeric: tabular-nums;">
+            <span style="display: inline-block; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 2px 9px; font-weight: 600; margin-bottom: 4px;">CS2310: 2026A B+ replaces 2025A C+</span><br>
+            <span style="color: #be123c;">Averaging both drops CGPA to 2.79</span>
+          </div>
+        </div>
+
+        <!-- Rule 4 -->
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid #e6e8ee;">
+          <div style="display: flex; align-items: baseline; gap: 16px; flex: 1 1 360px;">
+            <span style="font-size: 20px; font-weight: 700; color: #0284c7; font-variant-numeric: tabular-nums; min-width: 22px;">4</span>
+            <div>
+              <div style="font-size: 16px; font-weight: 600; color: #141519;">Starred grades (<code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px;">A+*</code>) are fully excluded</div>
+              <div style="font-size: 13.5px; color: #5b6070; margin-top: 3px;">Contributes neither to GPA calculation nor to earned graduation credit units.</div>
+            </div>
+          </div>
+          <div style="flex: 0 1 320px; font-size: 12.5px; font-variant-numeric: tabular-nums;">
+            <span style="display: inline-block; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 2px 9px; font-weight: 600; margin-bottom: 4px;">A+* = 0 CU earned, 0 CU in GPA</span><br>
+            <span style="color: #be123c;">Generic tools count it as A+ (4.3)</span>
+          </div>
+        </div>
+
+        <!-- Rule 5 -->
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid #e6e8ee;">
+          <div style="display: flex; align-items: baseline; gap: 16px; flex: 1 1 360px;">
+            <span style="font-size: 20px; font-weight: 700; color: #0284c7; font-variant-numeric: tabular-nums; min-width: 22px;">5</span>
+            <div>
+              <div style="font-size: 16px; font-weight: 600; color: #141519;">Non-graded marks separated by credit rule</div>
+              <div style="font-size: 13.5px; color: #5b6070; margin-top: 3px;"><code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #141519;">P / TR</code> earn credit only; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: #141519;">Z / IP / I / X / WD / AU</code> earn neither.</div>
+            </div>
+          </div>
+          <div style="flex: 0 1 320px; font-size: 12.5px; font-variant-numeric: tabular-nums;">
+            <span style="display: inline-block; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 2px 9px; font-weight: 600; margin-bottom: 4px;">P = +3 CU earned, 0 pts; Z = 0 CU</span><br>
+            <span style="color: #be123c;">Generic tools miscount as 0.0</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         4. TEAM OWNERSHIP & COMMIT COUNTS
+         ================================================================== -->
+    <section aria-labelledby="sec-team" class="cg-sec-pad" style="padding: 46px 44px; border-bottom: 1px solid #e6e8ee; background-color: #fafbfc;">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 22px;">
+        <div>
+          <h2 id="sec-team" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: #141519; line-height: 1.15;">
+            Team Ownership &amp; Commits
+          </h2>
+          <p style="margin: 6px 0 0 0; font-size: 15px; color: #5b6070;">
+            Five-stage modular pipeline built across isolated member branches.
+          </p>
+        </div>
+        <a class="cg-navlink" href="https://github.com/chenhn2026-dot/cityugpa/graphs/contributors" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 600; text-decoration: none; font-size: 13.5px;">GitHub Contributors Graph &nearr;</a>
+      </div>
+
+      <!-- Architectural Pipeline Diagram -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 14px 18px; background-color: #ffffff; border: 1px solid #e2e5ec; border-radius: 12px; margin-bottom: 20px; font-size: 12.5px;">
+        <span style="padding: 4px 10px; background-color: #f3f4f6; border: 1px solid #e2e5ec; border-radius: 6px; font-weight: 600; color: #141519;">CSV</span>
+        <span style="color: #9ca3af;">&rarr;</span>
+        <span style="padding: 4px 10px; background-color: #f3f4f6; border: 1px solid #e2e5ec; border-radius: 6px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #141519;">parser.py (B)</span>
+        <span style="color: #9ca3af;">&rarr;</span>
+        <span style="padding: 4px 10px; background-color: #f3f4f6; border: 1px solid #e2e5ec; border-radius: 6px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #141519;">scale.py + cityu.json (D)</span>
+        <span style="color: #9ca3af;">&rarr;</span>
+        <span style="padding: 4px 10px; background-color: #f3f4f6; border: 1px solid #e2e5ec; border-radius: 6px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #141519;">calc.py (C)</span>
+        <span style="color: #9ca3af;">&rarr;</span>
+        <span style="padding: 4px 10px; background-color: #141519; border-radius: 6px; font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; color: #ffffff;">cli.py &amp; report.py (E)</span>
+      </div>
+
+      <!-- Clean Ledger Table -->
+      <div style="background-color: #ffffff; border: 1px solid #e2e5ec; border-radius: 12px; overflow: hidden;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background-color: #f6f7f9;">
+                <th scope="col" style="text-align: left; padding: 12px 18px; border-bottom: 1px solid #e2e5ec; font-size: 12px; font-weight: 600; color: #5b6070;">Member</th>
+                <th scope="col" style="text-align: left; padding: 12px 16px; border-bottom: 1px solid #e2e5ec; font-size: 12px; font-weight: 600; color: #5b6070;">Owned Modules &amp; Deliverables</th>
+                <th scope="col" style="text-align: left; padding: 12px 16px; border-bottom: 1px solid #e2e5ec; font-size: 12px; font-weight: 600; color: #5b6070; min-width: 120px;">Commits</th>
+                <th scope="col" style="text-align: left; padding: 12px 18px; border-bottom: 1px solid #e2e5ec; font-size: 12px; font-weight: 600; color: #5b6070;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4; font-weight: 600; color: #141519;">A &middot; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; font-weight: 500;">chenhn2026-dot</code></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; color: #374151;">Repo setup, CI (<code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">ci.yml</code>), <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">pyproject.toml</code>, packaging</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; font-variant-numeric: tabular-nums;">
+                  <span style="font-weight: 700; color: #141519;">15</span>
+                  <div style="height: 4px; width: 100%; background-color: #eef0f4; border-radius: 999px; margin-top: 5px; overflow: hidden;">
+                    <div style="height: 4px; width: 100%; background-color: #0284c7; border-radius: 999px;"></div>
+                  </div>
+                </td>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4;"><span style="display: inline-block; background-color: #ecfdf5; color: #047857; border-radius: 6px; padding: 2px 9px; font-size: 12px; font-weight: 600;">On main</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4; font-weight: 600; color: #141519;">B &middot; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; font-weight: 500;">yuansuaomi</code></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; color: #374151;"><code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">parser.py</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">test_parser.py</code> &mdash; UTF-8 CSV validation &amp; line errors</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; font-variant-numeric: tabular-nums;">
+                  <span style="font-weight: 700; color: #141519;">6</span>
+                  <div style="height: 4px; width: 100%; background-color: #eef0f4; border-radius: 999px; margin-top: 5px; overflow: hidden;">
+                    <div style="height: 4px; width: 40%; background-color: #0284c7; border-radius: 999px;"></div>
+                  </div>
+                </td>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4;"><span style="display: inline-block; background-color: #ecfdf5; color: #047857; border-radius: 6px; padding: 2px 9px; font-size: 12px; font-weight: 600;">Merged (PR #1)</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4; font-weight: 600; color: #141519;">C &middot; <span style="font-weight: 500; color: #6b7280;">Calc Owner</span></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; color: #374151;"><code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">models.py</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">calc.py</code> &mdash; truncation, F retention, retakes &amp; target</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; font-variant-numeric: tabular-nums;">
+                  <span style="font-weight: 600; color: #b45309;">Pending</span>
+                  <div style="height: 4px; width: 100%; background-color: #eef0f4; border-radius: 999px; margin-top: 5px; overflow: hidden;">
+                    <div style="height: 4px; width: 8%; background-color: #d97706; border-radius: 999px;"></div>
+                  </div>
+                </td>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4;"><span style="display: inline-block; background-color: #fffbeb; color: #b45309; border-radius: 6px; padding: 2px 9px; font-size: 12px; font-weight: 600;">Integrating</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4; font-weight: 600; color: #141519;">D &middot; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; font-weight: 500;">evelyn523</code></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; color: #374151;"><code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">scale.py</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">scales/cityu.json</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">test_scale.py</code> &mdash; 4.3 scale subpackage</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; font-variant-numeric: tabular-nums;">
+                  <span style="font-weight: 700; color: #141519;">3</span>
+                  <div style="height: 4px; width: 100%; background-color: #eef0f4; border-radius: 999px; margin-top: 5px; overflow: hidden;">
+                    <div style="height: 4px; width: 20%; background-color: #0284c7; border-radius: 999px;"></div>
+                  </div>
+                </td>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4;"><span style="display: inline-block; background-color: #ecfdf5; color: #047857; border-radius: 6px; padding: 2px 9px; font-size: 12px; font-weight: 600;">Merged (PR #2)</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4; font-weight: 600; color: #141519;">E &middot; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; font-weight: 500;">sleepnap</code></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; color: #374151;"><code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">cli.py</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">report.py</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">test_cli.py</code> &mdash; 4 commands &amp; UI</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #eef0f4; font-variant-numeric: tabular-nums;">
+                  <span style="font-weight: 700; color: #141519;">6</span>
+                  <div style="height: 4px; width: 100%; background-color: #eef0f4; border-radius: 999px; margin-top: 5px; overflow: hidden;">
+                    <div style="height: 4px; width: 40%; background-color: #0284c7; border-radius: 999px;"></div>
+                  </div>
+                </td>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #eef0f4;"><span style="display: inline-block; background-color: #eff6ff; color: #1d4ed8; border-radius: 6px; padding: 2px 9px; font-size: 12px; font-weight: 600;">Branch E</span></td>
+              </tr>
+              <tr>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #e2e5ec; font-weight: 600; color: #141519;">F &middot; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; font-weight: 500;">haytham-fu</code></td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #e2e5ec; color: #374151;"><code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">README.md</code>, <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">examples/*.csv</code>, golden tests, wiki &amp; demo</td>
+                <td style="padding: 14px 16px; border-bottom: 1px solid #e2e5ec; font-variant-numeric: tabular-nums;">
+                  <span style="font-weight: 700; color: #141519;">8</span>
+                  <div style="height: 4px; width: 100%; background-color: #eef0f4; border-radius: 999px; margin-top: 5px; overflow: hidden;">
+                    <div style="height: 4px; width: 53%; background-color: #0284c7; border-radius: 999px;"></div>
+                  </div>
+                </td>
+                <td style="padding: 14px 18px; border-bottom: 1px solid #e2e5ec;"><span style="display: inline-block; background-color: #ecfdf5; color: #047857; border-radius: 6px; padding: 2px 9px; font-size: 12px; font-weight: 600;">On main</span></td>
+              </tr>
+              <tr style="background-color: #f6f7f9;">
+                <td style="padding: 14px 18px; font-weight: 700; color: #141519;">Total (All Branches)</td>
+                <td style="padding: 14px 16px; color: #5b6070;">Snapshot via <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">git shortlog -sn --all</code> (2026-11-22)</td>
+                <td style="padding: 14px 16px; font-size: 17px; font-weight: 700; color: #0284c7; font-variant-numeric: tabular-nums;">38</td>
+                <td style="padding: 14px 18px;"><a href="https://github.com/chenhn2026-dot/cityugpa/graphs/contributors" target="_blank" rel="noopener noreferrer" style="color: #0284c7; font-weight: 600; text-decoration: none; font-size: 13px;">Live Graph &nearr;</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         5. PROBLEMS ENCOUNTERED & HOW WE SOLVED THEM (ARCHITECTURAL 2x2)
+         ================================================================== -->
+    <section aria-labelledby="sec-fixes" class="cg-sec-pad" style="padding: 46px 44px;">
+      <div style="margin-bottom: 24px;">
+        <h2 id="sec-fixes" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: #141519; line-height: 1.15;">
+          Problems Encountered &amp; Solutions
+        </h2>
+        <p style="margin: 6px 0 0 0; font-size: 15px; color: #5b6070;">
+          Four concrete engineering issues we caught during development and how each was resolved in code.
+        </p>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; border: 1px solid #e2e5ec; border-radius: 14px; overflow: hidden;">
+
+        <!-- Cell 1 -->
+        <article style="flex: 1 1 380px; padding: 24px 26px; border-bottom: 1px solid #e2e5ec; border-right: 1px solid #e2e5ec; background-color: #ffffff;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #141519; margin-bottom: 10px; border-left: 3px solid #0ea5e9; padding-left: 10px;">
+            Floating-Point Truncation Drift
+          </div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: #4b5563;">
+            <strong style="color: #141519;">Issue:</strong> Binary float noise made <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #f3f4f6; padding: 1px 5px; border-radius: 4px;">floor(3.41 * 100)</code> return <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #f3f4f6; padding: 1px 5px; border-radius: 4px;">340</code>, silently losing 0.01.
+          </p>
+          <div style="background-color: #f6f7f9; border-radius: 8px; padding: 11px 14px; font-size: 13.5px; color: #141519;">
+            <strong style="color: #047857;">Fix:</strong> Applied <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">math.floor(x * 100 + 1e-9) / 100</code> to absorb IEEE-754 noise while still strictly truncating <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">3.4166&hellip;</code> to <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">3.41</code>.
+          </div>
+        </article>
+
+        <!-- Cell 2 -->
+        <article style="flex: 1 1 380px; padding: 24px 26px; border-bottom: 1px solid #e2e5ec; background-color: #ffffff;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #141519; margin-bottom: 10px; border-left: 3px solid #0ea5e9; padding-left: 10px;">
+            Starred Grades (<code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px;">A+*</code>) Mishandling
+          </div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: #4b5563;">
+            <strong style="color: #141519;">Issue:</strong> Trailing asterisks were initially stripped or treated as regular <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #f3f4f6; padding: 1px 5px; border-radius: 4px;">A+</code> credits.
+          </p>
+          <div style="background-color: #f6f7f9; border-radius: 8px; padding: 11px 14px; font-size: 13.5px; color: #141519;">
+            <strong style="color: #047857;">Fix:</strong> Preserved <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">*</code> in <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">parser.py</code>; <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">scale.py</code> returns <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">counts=False</code> and <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">can_earn_credit=False</code>.
+          </div>
+        </article>
+
+        <!-- Cell 3 -->
+        <article style="flex: 1 1 380px; padding: 24px 26px; border-right: 1px solid #e2e5ec; background-color: #ffffff;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #141519; margin-bottom: 10px; border-left: 3px solid #0ea5e9; padding-left: 10px;">
+            Broken Excel CSV Encodings
+          </div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: #4b5563;">
+            <strong style="color: #141519;">Issue:</strong> GBK/UTF-16 exports or malformed rows could crash with raw tracebacks or silently skip courses.
+          </p>
+          <div style="background-color: #f6f7f9; border-radius: 8px; padding: 11px 14px; font-size: 13.5px; color: #141519;">
+            <strong style="color: #047857;">Fix:</strong> <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">parser.py</code> enforces UTF-8 with an actionable &ldquo;Save as CSV UTF-8&rdquo; hint and reports every bad row by exact line number (exit code 1).
+          </div>
+        </article>
+
+        <!-- Cell 4 -->
+        <article style="flex: 1 1 380px; padding: 24px 26px; background-color: #ffffff;">
+          <div style="font-size: 15.5px; font-weight: 700; color: #141519; margin-bottom: 10px; border-left: 3px solid #0ea5e9; padding-left: 10px;">
+            Offline &amp; Packaged Data Paths
+          </div>
+          <p style="margin: 0 0 12px 0; font-size: 14px; color: #4b5563;">
+            <strong style="color: #141519;">Issue:</strong> Relative paths to <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #f3f4f6; padding: 1px 5px; border-radius: 4px;">cityu.json</code> broke outside the repo, and <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px; background-color: #f3f4f6; padding: 1px 5px; border-radius: 4px;">PATH</code> issues tripped up beginners.
+          </p>
+          <div style="background-color: #f6f7f9; border-radius: 8px; padding: 11px 14px; font-size: 13.5px; color: #141519;">
+            <strong style="color: #047857;">Fix:</strong> Packaged <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">cityugpa.scales</code> as a subpackage loaded via <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">importlib.resources.files("cityugpa.scales")</code> (defaulting <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">load_scale()</code> to <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">"cityu"</code>) and documented <code style="font-family: 'SF Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 12px;">python3 -m cityugpa.cli</code>.
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- OBSIDIAN QUICK-START FOOTER -->
+  <footer class="cg-sec-pad" style="background-color: #070b14; background-image: radial-gradient(ellipse 60% 70% at 88% 10%, rgba(129, 140, 248, 0.22) 0%, rgba(45, 212, 191, 0.10) 45%, rgba(7, 11, 20, 0) 75%); color: #e2e8f0; padding: 34px 44px;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 22px; border-bottom: 1px solid #1e2028;">
+      <div>
+        <div style="font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: #ffffff;">Get started in three commands</div>
+        <div style="font-size: 13.5px; color: #8c92a4; margin-top: 2px;">Standard library only &mdash; runs completely offline on macOS, Windows, and Linux.</div>
+      </div>
+      <div style="overflow-x: auto; flex: 1 1 360px;">
+        <pre style="margin: 0; background-color: #14161d; border: 1px solid #262934; color: #e5e7eb; padding: 14px 18px; border-radius: 10px; font-family: 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 12.5px; line-height: 1.65; white-space: pre-wrap; word-break: break-word;"><code>pip install cityugpa
+cityugpa --help
+cityugpa term examples/fake_transcript.csv</code></pre>
+      </div>
+    </div>
+
+    <div style="padding-top: 18px; font-size: 12.5px; color: #7e8392; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px;">
+      <span><strong style="color: #ffffff; font-weight: 600;">CityUGPA</strong> &middot; CityU CS Group Project &middot; MIT License</span>
+      <span>
+        <a href="https://github.com/chenhn2026-dot/cityugpa" target="_blank" rel="noopener noreferrer" style="color: #d1d5db; text-decoration: none; margin-right: 16px;">GitHub</a>
+        <a href="https://pypi.org/project/cityugpa/" target="_blank" rel="noopener noreferrer" style="color: #d1d5db; text-decoration: none; margin-right: 16px;">PyPI</a>
+        <a href="https://www.cityu.edu.hk/arro/asmt/cgrd_main.htm" target="_blank" rel="noopener noreferrer" style="color: #5eead4; text-decoration: none;">CityU ARRO</a>
+      </span>
+    </div>
+  </footer>
+
+</div>
+<!-- MOODLE / TINYMCE COPY END -->
+
+</body>
+</html>
