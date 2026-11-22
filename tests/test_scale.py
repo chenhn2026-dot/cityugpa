@@ -1,7 +1,7 @@
 import pytest
 from cityugpa.scale import load_scale, grade_point, can_earn_credit
 
-s = load_scale()
+s = load_scale("cityu")
 
 def test_normal_grade():
     assert grade_point("A-", s) == (3.7, True)

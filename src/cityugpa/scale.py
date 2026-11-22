@@ -1,20 +1,11 @@
 """Grade scale loading and the CityU grade -> grade point mapping."""
 
 import json
-from importlib import resources
+from importlib.resources import files
 
-
-def load_scale(path=None):
-    """读量表，返回一个 dict。
-
-    不传 path 时用随包一起安装的 ``scales/cityu.json``——用 importlib.resources
-    读，而不是相对路径，所以装在别的机器、在别的目录下跑都能找到。
-    """
-    if path is None:
-        table = resources.files("cityugpa").joinpath("scales/cityu.json")
-        with table.open("r", encoding="utf-8") as f:
-            return json.load(f)
-    with open(path, "r", encoding="utf-8") as f:
+def load_scale(scale_name: str):
+    resource = files("cityugpa.scales").joinpath(f"{scale_name}.json")
+    with resource.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
