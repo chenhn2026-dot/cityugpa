@@ -24,6 +24,15 @@ Most online GPA calculators give a different number from your CityU transcript b
 
 ---
 
+## Use Cases
+
+- **Check a number you do not trust.** AIMS says `3.41` but the online calculator said `3.42` — paste your grades and see which rule the calculator ignored.
+- **Plan the next semester.** `cityugpa target --goal 3.6 --remaining 15 my_grades.csv` answers "what average do I need from here" before course selection closes.
+- **Understand a retake.** See exactly what a repeat course does to CGPA, and whether the first attempt still counts.
+- **Check the Dean's List line early.** It is a credit threshold *and* a GPA threshold — one command tells you how far you are from both.
+
+---
+
 ## Quick Start (Beginner-Friendly, 3 Minutes)
 
 Never used a terminal before? Just follow these three steps in order.
